@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Clock, BookOpen, TrendingUp, Save, CheckCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+
+// Tipos para TypeScript
+interface Report {
+  id: string;
+  week: number;
+  hours: number;
+  activities: string;
+  learnings: string;
+  difficulties: string;
+  submittedDate: string;
+  status: "Pendiente Revisión" | "Aprobado" | "Necesita Revisión";
+}
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -19,9 +31,64 @@ const Reports = () => {
   const [learnings, setLearnings] = useState("");
   const [difficulties, setDifficulties] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
+  const [reports, setReports] = useState<Report[]>([]);
 
   const totalSteps = 3;
   const stepNames = ["Información Básica", "Actividades", "Reflexión"];
+
+  // Cargar reportes desde localStorage al montar el componente
+  useEffect(() => {
+    const savedReports = localStorage.getItem('practiceReports');
+    if (savedReports) {
+      setReports(JSON.parse(savedReports));
+    } else {
+      // Datos iniciales ficticios
+      const initialReports: Report[] = [
+        {
+          id: "1",
+          week: 7,
+          hours: 40,
+          activities: "Desarrollo de módulo de autenticación, revisión de código, documentación técnica",
+          learnings: "Aprendí sobre JWT tokens y mejores prácticas de seguridad",
+          difficulties: "Configuración inicial del sistema de roles fue compleja",
+          submittedDate: "2024-01-15",
+          status: "Aprobado"
+        },
+        {
+          id: "2", 
+          week: 6,
+          hours: 38,
+          activities: "Implementación de API REST, testing unitario, reuniones de equipo",
+          learnings: "Profundicé en patrones de arquitectura backend",
+          difficulties: "Optimización de consultas a base de datos",
+          submittedDate: "2024-01-08",
+          status: "Aprobado"
+        },
+        {
+          id: "3",
+          week: 5,
+          hours: 42,
+          activities: "Diseño de base de datos, modelado de entidades, documentación",
+          learnings: "Normalización de bases de datos y relaciones complejas",
+          difficulties: "Manejo de transacciones y rollbacks",
+          submittedDate: "2024-01-01",
+          status: "Aprobado"
+        },
+        {
+          id: "4",
+          week: 4,
+          hours: 40,
+          activities: "Setup del entorno de desarrollo, configuración de herramientas",
+          learnings: "Docker, CI/CD pipelines básicos",
+          difficulties: "Configuración de entorno de staging",
+          submittedDate: "2023-12-25",
+          status: "Necesita Revisión"
+        }
+      ];
+      setReports(initialReports);
+      localStorage.setItem('practiceReports', JSON.stringify(initialReports));
+    }
+  }, []);
 
   const isStepComplete = (step: number) => {
     switch (step) {
@@ -36,40 +103,11 @@ const Reports = () => {
     }
   };
 
-  const currentWeek = 8;
+  // Calcular progreso dinámicamente basado en reportes enviados
+  const completedWeeks = reports.length;
   const totalWeeks = 12;
-  const progressPercentage = (currentWeek / totalWeeks) * 100;
-
-  const previousReports = [
-    {
-      id: 1,
-      week: 7,
-      hours: 40,
-      submittedDate: "2024-01-15",
-      status: "Aprobado"
-    },
-    {
-      id: 2,
-      week: 6,
-      hours: 38,
-      submittedDate: "2024-01-08",
-      status: "Aprobado"
-    },
-    {
-      id: 3,
-      week: 5,
-      hours: 42,
-      submittedDate: "2024-01-01",
-      status: "Aprobado"
-    },
-    {
-      id: 4,
-      week: 4,
-      hours: 40,
-      submittedDate: "2023-12-25",
-      status: "Pendiente Revisión"
-    }
-  ];
+  const currentWeek = completedWeeks + 1;
+  const progressPercentage = (completedWeeks / totalWeeks) * 100;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,12 +121,29 @@ const Reports = () => {
       return;
     }
 
+    // Crear nuevo reporte
+    const newReport: Report = {
+      id: Date.now().toString(), // ID único basado en timestamp
+      week: parseInt(weekNumber),
+      hours: parseInt(hoursWorked),
+      activities,
+      learnings,
+      difficulties,
+      submittedDate: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+      status: "Pendiente Revisión"
+    };
+
+    // Agregar el nuevo reporte al estado y localStorage
+    const updatedReports = [newReport, ...reports];
+    setReports(updatedReports);
+    localStorage.setItem('practiceReports', JSON.stringify(updatedReports));
+
     toast({
-      title: "Avance guardado exitosamente",
-      description: `Se ha guardado el reporte de la semana ${weekNumber}.`,
+      title: "✅ Reporte enviado exitosamente",
+      description: `Se ha enviado el reporte de la semana ${weekNumber}. Estado: Pendiente Revisión.`,
     });
 
-    // Reset form
+    // Reset form y volver al paso 1
     setWeekNumber("");
     setHoursWorked("");
     setActivities("");
@@ -100,13 +155,13 @@ const Reports = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Aprobado":
-        return "bg-success text-success-foreground";
+        return "bg-green-100 text-green-800 border-green-200";
       case "Pendiente Revisión":
-        return "bg-warning text-warning-foreground";
-      case "Rechazado":
-        return "bg-destructive text-destructive-foreground";
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Necesita Revisión":
+        return "bg-orange-100 text-orange-800 border-orange-200";
       default:
-        return "bg-muted text-muted-foreground";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -143,10 +198,29 @@ const Reports = () => {
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-foreground">Semana {currentWeek} de {totalWeeks} completada</span>
+                <span className="text-sm font-medium text-foreground">
+                  {completedWeeks} de {totalWeeks} semanas completadas
+                </span>
                 <span className="text-sm font-medium text-accent">{progressPercentage.toFixed(0)}%</span>
               </div>
               <Progress value={progressPercentage} className="w-full h-3" />
+              <p className="text-sm text-muted-foreground">
+                Próxima semana a reportar: <strong>Semana {currentWeek}</strong>
+              </p>
+              <div className="flex gap-4 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span>Aprobados: {reports.filter(r => r.status === "Aprobado").length}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <span>Pendientes: {reports.filter(r => r.status === "Pendiente Revisión").length}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                  <span>Necesitan Revisión: {reports.filter(r => r.status === "Necesita Revisión").length}</span>
+                </div>
+              </div>
               <p className="text-sm text-muted-foreground">
                 Te quedan {totalWeeks - currentWeek} semanas para completar tu práctica profesional
               </p>
@@ -347,32 +421,49 @@ const Reports = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {previousReports.map((report) => (
+                  {reports.map((report) => (
                     <div key={report.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-start mb-3">
                         <div>
                           <h4 className="font-medium text-foreground">Semana {report.week}</h4>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                            <Clock className="w-3 h-3" />
-                            <span>{report.hours} horas</span>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{report.hours} horas</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              <span>{new Date(report.submittedDate).toLocaleDateString('es-ES')}</span>
+                            </div>
                           </div>
                         </div>
-                        <Badge className={getStatusColor(report.status)}>
+                        <Badge className={`${getStatusColor(report.status)} border`}>
                           {report.status}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Enviado el {new Date(report.submittedDate).toLocaleDateString('es-ES', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
+                      
+                      {/* Preview de actividades */}
+                      <div className="text-sm space-y-2">
+                        <div>
+                          <span className="font-medium text-foreground">Actividades:</span>
+                          <p className="text-muted-foreground mt-1 line-clamp-2">
+                            {report.activities}
+                          </p>
+                        </div>
+                        {report.learnings && (
+                          <div>
+                            <span className="font-medium text-foreground">Aprendizajes:</span>
+                            <p className="text-muted-foreground mt-1 line-clamp-1">
+                              {report.learnings}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {previousReports.length === 0 && (
+                {reports.length === 0 && (
                   <div className="text-center py-8">
                     <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                     <p className="text-muted-foreground">Aún no has enviado reportes</p>

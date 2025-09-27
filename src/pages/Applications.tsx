@@ -1,11 +1,39 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, Calendar, FileText, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Building2, Calendar, FileText, Eye, MapPin, Clock, Users, Mail, Phone, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+// Tipos para los detalles de las empresas
+interface CompanyDetails {
+  id: number;
+  company: string;
+  logo: string;
+  position: string;
+  sector: string;
+  size: string;
+  location: string;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  supervisor: string;
+  email: string;
+  phone: string;
+  duration: string;
+  schedule: string;
+  modality: string;
+  timeline: Array<{
+    date: string;
+    event: string;
+  }>;
+}
 
 const Applications = () => {
   const navigate = useNavigate();
+  const [selectedApplication, setSelectedApplication] = useState<number | null>(null);
 
   const applications = [
     {
@@ -50,6 +78,150 @@ const Applications = () => {
     }
   ];
 
+  // Datos detallados de las empresas
+  const companyDetails: CompanyDetails[] = [
+    {
+      id: 1,
+      company: "TechCorp Solutions",
+      logo: "🏢",
+      position: "Desarrollador Full-Stack Jr.",
+      sector: "Desarrollo de Software",
+      size: "51-200 empleados",
+      location: "Santiago, Las Condes",
+      description: "Empresa líder en soluciones tecnológicas para empresas medianas y grandes. Nos especializamos en desarrollo de aplicaciones web y móviles, con más de 10 años de experiencia en el mercado chileno.",
+      requirements: [
+        "Conocimientos en JavaScript/TypeScript",
+        "Experiencia con React y Node.js",
+        "Familiaridad con bases de datos SQL",
+        "Conocimientos básicos de Git",
+        "Inglés técnico intermedio"
+      ],
+      benefits: [
+        "Seguro de salud complementario",
+        "Horario flexible",
+        "Capacitaciones internas",
+        "Ambiente de trabajo colaborativo",
+        "Posibilidad de continuidad laboral"
+      ],
+      supervisor: "María González",
+      email: "maria.gonzalez@techcorp.cl",
+      phone: "+56 9 8765 4321",
+      duration: "4 meses",
+      schedule: "Lunes a Viernes, 9:00 - 18:00",
+      modality: "Híbrido (3 días presencial, 2 días remoto)",
+      timeline: [
+        { date: "20/01/2024", event: "Postulación enviada" },
+        { date: "22/01/2024", event: "Entrevista técnica realizada" },
+        { date: "25/01/2024", event: "Esperando respuesta de RRHH" }
+      ]
+    },
+    {
+      id: 2,
+      company: "DataSciencePro",
+      logo: "📊",
+      position: "Analista de Datos Jr.",
+      sector: "Análisis de Datos y BI",
+      size: "11-50 empleados",
+      location: "Santiago, Providencia",
+      description: "Consultora especializada en análisis de datos y business intelligence. Trabajamos con grandes corporaciones ayudándolas a tomar decisiones basadas en datos.",
+      requirements: [
+        "Conocimientos en Python/R",
+        "Experiencia con SQL",
+        "Familiaridad con Power BI o Tableau",
+        "Conocimientos estadísticos básicos",
+        "Capacidad analítica"
+      ],
+      benefits: [
+        "Mentorías con senior data scientists",
+        "Acceso a cursos online",
+        "Trabajo con datos reales",
+        "Networking con industria",
+        "Certificaciones pagadas"
+      ],
+      supervisor: "Carlos Mendoza",
+      email: "carlos.mendoza@datasciencepro.cl",
+      phone: "+56 9 7654 3210",
+      duration: "5 meses",
+      schedule: "Lunes a Viernes, 8:30 - 17:30",
+      modality: "Presencial",
+      timeline: [
+        { date: "18/01/2024", event: "Postulación enviada" },
+        { date: "21/01/2024", event: "Revisión de CV aprobada" },
+        { date: "25/01/2024", event: "Entrevista técnica programada - 14:00" }
+      ]
+    },
+    {
+      id: 3,
+      company: "CyberSecure Chile",
+      logo: "🔒",
+      position: "Especialista en Ciberseguridad Jr.",
+      sector: "Ciberseguridad",
+      size: "201-500 empleados",
+      location: "Santiago, Vitacura",
+      description: "Empresa líder en ciberseguridad en Chile, brindando servicios de consultoría y soluciones de seguridad informática a empresas de todos los tamaños.",
+      requirements: [
+        "Conocimientos en redes y protocolos",
+        "Familiaridad con Linux",
+        "Conceptos básicos de criptografía",
+        "Inglés avanzado",
+        "Certificaciones de seguridad (deseable)"
+      ],
+      benefits: [
+        "Capacitación en herramientas especializadas",
+        "Certificaciones internacionales",
+        "Exposición a casos reales",
+        "Mentoría especializada",
+        "Red de contactos en ciberseguridad"
+      ],
+      supervisor: "Andrea Silva",
+      email: "andrea.silva@cybersecure.cl",
+      phone: "+56 9 6543 2109",
+      duration: "6 meses",
+      schedule: "Lunes a Viernes, 9:00 - 18:00",
+      modality: "Presencial",
+      timeline: [
+        { date: "15/01/2024", event: "Postulación enviada" },
+        { date: "17/01/2024", event: "Entrevista inicial realizada" },
+        { date: "19/01/2024", event: "Decisión: No seleccionado" }
+      ]
+    },
+    {
+      id: 4,
+      company: "MobileTech Innovations",
+      logo: "📱",
+      position: "Desarrollador Mobile Jr.",
+      sector: "Desarrollo Mobile",
+      size: "11-50 empleados",
+      location: "Santiago, Las Condes",
+      description: "Startup en crecimiento especializada en desarrollo de aplicaciones móviles innovadoras. Trabajamos con startups y empresas consolidadas en la creación de apps iOS y Android.",
+      requirements: [
+        "Conocimientos en React Native o Flutter",
+        "Experiencia con JavaScript/Dart",
+        "Familiaridad con APIs REST",
+        "Conocimientos de UI/UX mobile",
+        "Inglés intermedio"
+      ],
+      benefits: [
+        "Ambiente startup dinámico",
+        "Participación en proyectos innovadores",
+        "Flexibilidad horaria",
+        "Oportunidad de crecimiento rápido",
+        "Stock options (si continúas)"
+      ],
+      supervisor: "Juan Pérez",
+      email: "juan.perez@mobiletech.cl",
+      phone: "+56 9 5432 1098",
+      duration: "4 meses",
+      schedule: "Lunes a Viernes, 9:30 - 18:30",
+      modality: "Híbrido (2 días presencial, 3 días remoto)",
+      timeline: [
+        { date: "12/01/2024", event: "Postulación enviada" },
+        { date: "14/01/2024", event: "Entrevista técnica aprobada" },
+        { date: "16/01/2024", event: "¡Seleccionado! Iniciar 1 de febrero" }
+      ]
+    }
+  ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "En Revisión":
@@ -78,6 +250,19 @@ const Applications = () => {
       default:
         return "📄";
     }
+  };
+
+  const getCompanyDetails = (id: number): CompanyDetails | undefined => {
+    return companyDetails.find(detail => detail.id === id);
+  };
+
+  const getTimelineIcon = (event: string) => {
+    if (event.includes("Postulación")) return "📝";
+    if (event.includes("Entrevista")) return "🎯";
+    if (event.includes("Seleccionado") || event.includes("Aprobada")) return "✅";
+    if (event.includes("Esperando") || event.includes("Programada")) return "⏳";
+    if (event.includes("Rechazado") || event.includes("No seleccionado")) return "❌";
+    return "📋";
   };
 
   return (
@@ -173,10 +358,174 @@ const Applications = () => {
                   <p className="text-sm text-muted-foreground">{application.notes}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Ver Detalles
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="flex-1">
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver Detalles
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                      {(() => {
+                        const details = getCompanyDetails(application.id);
+                        if (!details) return <div>No se encontraron detalles</div>;
+                        
+                        return (
+                          <>
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-3 text-xl">
+                                <span className="text-2xl">{details.logo}</span>
+                                <div>
+                                  <div>{details.company}</div>
+                                  <div className="text-base font-normal text-muted-foreground">{details.position}</div>
+                                </div>
+                              </DialogTitle>
+                            </DialogHeader>
+                            
+                            <div className="space-y-6">
+                              {/* Información básica de la empresa */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <Building2 className="w-4 h-4" />
+                                    Sector
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.sector}</p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <Users className="w-4 h-4" />
+                                    Tamaño
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.size}</p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <MapPin className="w-4 h-4" />
+                                    Ubicación
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.location}</p>
+                                </div>
+                              </div>
+
+                              <Separator />
+
+                              {/* Descripción de la empresa */}
+                              <div>
+                                <h4 className="font-medium mb-2">Sobre la Empresa</h4>
+                                <p className="text-sm text-muted-foreground">{details.description}</p>
+                              </div>
+
+                              <Separator />
+
+                              {/* Detalles de la práctica */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <Calendar className="w-4 h-4" />
+                                    Duración
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.duration}</p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <Clock className="w-4 h-4" />
+                                    Horarios
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.schedule}</p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-sm font-medium">
+                                    <Building2 className="w-4 h-4" />
+                                    Modalidad
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{details.modality}</p>
+                                </div>
+                              </div>
+
+                              <Separator />
+
+                              {/* Requisitos y beneficios */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                  <h4 className="font-medium mb-3">Requisitos</h4>
+                                  <ul className="space-y-2">
+                                    {details.requirements.map((req, index) => (
+                                      <li key={index} className="flex items-start gap-2 text-sm">
+                                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                        <span className="text-muted-foreground">{req}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <h4 className="font-medium mb-3">Beneficios</h4>
+                                  <ul className="space-y-2">
+                                    {details.benefits.map((benefit, index) => (
+                                      <li key={index} className="flex items-start gap-2 text-sm">
+                                        <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                                        <span className="text-muted-foreground">{benefit}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+
+                              <Separator />
+
+                              {/* Información de contacto */}
+                              <div>
+                                <h4 className="font-medium mb-3">Contacto del Supervisor</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm font-medium">
+                                      <Users className="w-4 h-4" />
+                                      Supervisor
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{details.supervisor}</p>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm font-medium">
+                                      <Mail className="w-4 h-4" />
+                                      Email
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{details.email}</p>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm font-medium">
+                                      <Phone className="w-4 h-4" />
+                                      Teléfono
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{details.phone}</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <Separator />
+
+                              {/* Timeline de la postulación */}
+                              <div>
+                                <h4 className="font-medium mb-3">Estado de Postulación</h4>
+                                <div className="space-y-3">
+                                  {details.timeline.map((item, index) => (
+                                    <div key={index} className="flex items-start gap-3">
+                                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm">
+                                        {getTimelineIcon(item.event)}
+                                      </div>
+                                      <div className="flex-1 space-y-1">
+                                        <p className="text-sm font-medium">{item.event}</p>
+                                        <p className="text-xs text-muted-foreground">{item.date}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </DialogContent>
+                  </Dialog>
                   {application.status === "Entrevista Programada" && (
                     <Button className="gradient-primary text-primary-foreground">
                       Preparar Entrevista
