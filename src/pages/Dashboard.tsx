@@ -113,14 +113,46 @@ const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="p-3 bg-accent/10 rounded-lg border-l-4 border-l-accent">
-                <p className="font-medium text-accent-foreground">Recordatorio: Entrega de informe semanal</p>
-                <p className="text-sm text-muted-foreground mt-1">Tienes hasta mañana para entregar tu informe de la semana 8</p>
+            <div className="space-y-4">
+              <div className="p-4 bg-accent/10 rounded-lg border-l-4 border-l-accent">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex-1">
+                    <p className="font-medium text-accent-foreground">Recordatorio: Entrega de informe semanal</p>
+                    <p className="text-sm text-muted-foreground mt-1">Tienes hasta mañana para entregar tu informe de la semana 8</p>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    onClick={() => navigate('/reports')}
+                    className="gradient-primary text-primary-foreground font-medium whitespace-nowrap"
+                  >
+                    Ir a la Bitácora
+                  </Button>
+                </div>
               </div>
-              <div className="p-3 bg-primary/5 rounded-lg border-l-4 border-l-primary">
-                <p className="font-medium text-primary">Nueva oferta disponible</p>
-                <p className="text-sm text-muted-foreground mt-1">Se publicó una nueva oferta para Desarrollador Frontend en TechCorp</p>
+              
+              <div className="p-4 bg-primary/5 rounded-lg border-l-4 border-l-primary">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex-1">
+                    <p className="font-medium text-primary">Nueva oferta disponible</p>
+                    <p className="text-sm text-muted-foreground mt-1">Se publicó una nueva oferta para Desarrollador Frontend en TechCorp</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => navigate('/offers')}
+                    >
+                      Ver Detalles
+                    </Button>
+                    <Button 
+                      size="sm"
+                      onClick={() => navigate('/offers')}
+                      className="gradient-primary text-primary-foreground font-medium"
+                    >
+                      Postulación Rápida
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

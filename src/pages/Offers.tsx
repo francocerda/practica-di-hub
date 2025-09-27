@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Clock, Building2, ArrowLeft } from "lucide-react";
+import { Search, MapPin, Clock, Building2, ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import QuickApplicationModal from "@/components/QuickApplicationModal";
 
 const Offers = () => {
   const navigate = useNavigate();
@@ -13,6 +14,13 @@ const Offers = () => {
   const [modalityFilter, setModalityFilter] = useState("all");
   const [scheduleFilter, setScheduleFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<typeof offers[0] | null>(null);
+
+  const handleQuickApplication = (offer: typeof offers[0]) => {
+    setSelectedOffer(offer);
+    setIsApplicationModalOpen(true);
+  };
 
   const offers = [
     {
@@ -243,9 +251,18 @@ const Offers = () => {
                 <CardDescription className="mb-4 text-base">
                   {offer.description}
                 </CardDescription>
-                <Button className="w-full gradient-primary text-primary-foreground font-medium">
-                  Ver Detalles
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1">
+                    Ver Detalles
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickApplication(offer)}
+                    className="flex-1 gradient-primary text-primary-foreground font-medium"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Postulación Rápida
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -263,6 +280,12 @@ const Offers = () => {
           </Card>
         )}
       </main>
+
+      <QuickApplicationModal
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        offer={selectedOffer}
+      />
     </div>
   );
 };
