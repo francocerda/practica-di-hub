@@ -28,7 +28,7 @@ const Dashboard = () => {
       <header className="gradient-primary text-primary-foreground p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Portal de Prácticas DI</h1>
-          <p className="text-lg opacity-90">Bienvenido, {studentName}</p>
+          <p className="text-lg opacity-90">Bienvenido</p>
         </div>
       </header>
 

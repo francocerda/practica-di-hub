@@ -25,10 +25,10 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
 
   // Pre-filled user data (would come from auth context in real app)
   const studentData = {
-    name: "María González",
-    email: "maria.gonzalez@estudiante.di.cl",
-    phone: "+56 9 1234 5678",
-    career: "Ingeniería en Informática"
+    name: "",
+    email: "",
+    phone: "",
+    career: ""
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,18 +84,17 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
               <Label htmlFor="name">Nombre Completo</Label>
               <Input
                 id="name"
-                value={studentData.name}
-                disabled
-                className="bg-muted/50"
+                placeholder="Ingresa tu nombre completo"
+                required
               />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                value={studentData.email}
-                disabled
-                className="bg-muted/50"
+                type="email"
+                placeholder="tu.email@estudiante.di.cl"
+                required
               />
             </div>
           </div>
@@ -105,18 +104,16 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
               <Label htmlFor="phone">Teléfono</Label>
               <Input
                 id="phone"
-                value={studentData.phone}
-                disabled
-                className="bg-muted/50"
+                placeholder="+56 9 1234 5678"
+                required
               />
             </div>
             <div>
               <Label htmlFor="career">Carrera</Label>
               <Input
                 id="career"
-                value={studentData.career}
-                disabled
-                className="bg-muted/50"
+                placeholder="Tu carrera"
+                required
               />
             </div>
           </div>
