@@ -547,15 +547,22 @@ const Applications = () => {
                       })()}
                     </DialogContent>
                   </Dialog>
-                  {application.status === "Entrevista Programada" && (
-                    <Button className="gradient-primary text-primary-foreground">
-                      Preparar Entrevista
-                    </Button>
-                  )}
                   {application.status === "Aceptada" && (
-                    <Button className="bg-success text-success-foreground hover:bg-success/90">
-                      Ver Siguiente Paso
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="bg-success text-success-foreground hover:bg-success/90">
+                          Ver Siguiente Paso
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Siguiente paso</DialogTitle>
+                          <DialogDescription>
+                            La empresa {application.company} se pondrá en contacto por correo para coordinar los próximos pasos.
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                   )}
                 </div>
               </CardContent>

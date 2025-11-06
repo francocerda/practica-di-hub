@@ -15,7 +15,7 @@ import Navbar from "@/components/Navbar";
  */
 interface Report {
   id: string;
-  week: number;
+  date: string;
   hours: number;
   activities: string;
   learnings: string;
@@ -25,13 +25,13 @@ interface Report {
 }
 
 /**
- * Página de bitácora de práctica donde los estudiantes registran sus avances semanales
+ * Página de bitácora de práctica donde los estudiantes registran sus avances diarios
  */
 const Reports = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [weekNumber, setWeekNumber] = useState("");
+  const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
   const [hoursWorked, setHoursWorked] = useState("");
   const [activities, setActivities] = useState("");
   const [learnings, setLearnings] = useState("");
@@ -48,14 +48,38 @@ const Reports = () => {
   useEffect(() => {
     const savedReports = localStorage.getItem('practiceReports');
     if (savedReports) {
-      setReports(JSON.parse(savedReports));
+      const parsedReports = JSON.parse(savedReports);
+      // Migrar reportes antiguos que tenían 'week' a 'date'
+      const migratedReports = parsedReports.map((report: any) => {
+        if (report.week && !report.date) {
+          // Si tiene week pero no date, generar una fecha aproximada
+          // Basado en el número de semana desde el inicio de la práctica
+          const startDate = new Date('2024-02-05'); // Fecha de inicio aproximada
+          const reportDate = new Date(startDate);
+          reportDate.setDate(startDate.getDate() + (report.week - 1) * 7);
+          return {
+            ...report,
+            date: reportDate.toISOString().split('T')[0]
+          };
+        }
+        return report;
+      });
+      // Ordenar por fecha (más reciente primero)
+      const sortedReports = migratedReports.sort((a: Report, b: Report) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      setReports(sortedReports);
+      // Actualizar localStorage con formato migrado
+      if (parsedReports.some((r: any) => r.week && !r.date)) {
+        localStorage.setItem('practiceReports', JSON.stringify(sortedReports));
+      }
     } else {
-      // Datos iniciales ficticios - Semanas 1, 2 y 3
+      // Datos iniciales ficticios - Días de práctica
       const initialReports: Report[] = [
         {
           id: "3",
-          week: 3,
-          hours: 42,
+          date: "2024-02-19",
+          hours: 8,
           activities: "Diseño de base de datos para el proyecto principal, modelado de entidades y relaciones, documentación técnica del modelo ER",
           learnings: "Aprendí sobre normalización de bases de datos, relaciones complejas entre entidades y mejores prácticas de diseño de bases de datos",
           difficulties: "Manejo de transacciones complejas y implementación correcta de rollbacks en casos de error",
@@ -64,22 +88,22 @@ const Reports = () => {
         },
         {
           id: "2", 
-          week: 2,
-          hours: 38,
+          date: "2024-02-18",
+          hours: 7.5,
           activities: "Configuración del entorno de desarrollo, instalación de herramientas necesarias, primeros commits al repositorio del proyecto",
           learnings: "Familiarización con el stack tecnológico de la empresa, Git workflows utilizados por el equipo y metodologías ágiles",
           difficulties: "Configuración inicial de las credenciales de acceso y permisos en los diferentes sistemas",
-          submittedDate: "2024-02-12",
+          submittedDate: "2024-02-18",
           status: "Aprobado"
         },
         {
           id: "1",
-          week: 1,
-          hours: 40,
+          date: "2024-02-17",
+          hours: 8,
           activities: "Inducción general a la empresa, conocimiento del equipo de trabajo, revisión de la documentación del proyecto asignado, setup inicial de ambiente local",
           learnings: "Conocimiento de la cultura organizacional, procesos internos de desarrollo, herramientas colaborativas utilizadas (Jira, Confluence, Slack)",
           difficulties: "Adaptación al ritmo de trabajo del equipo y comprensión del dominio del negocio",
-          submittedDate: "2024-02-05",
+          submittedDate: "2024-02-17",
           status: "Aprobado"
         }
       ];
@@ -94,7 +118,7 @@ const Reports = () => {
   const isStepComplete = (step: number) => {
     switch (step) {
       case 1:
-        return weekNumber && hoursWorked;
+        return reportDate && hoursWorked;
       case 2:
         return activities;
       case 3:
@@ -106,22 +130,35 @@ const Reports = () => {
 
   /**
    * Calcular progreso dinámicamente basado en reportes enviados
+   * Considerando una práctica de aproximadamente 3 meses (90 días laborables)
    */
-  const completedWeeks = reports.length;
-  const totalWeeks = 12;
-  const currentWeek = completedWeeks + 1;
-  const progressPercentage = (completedWeeks / totalWeeks) * 100;
+  const completedDays = reports.length;
+  const totalDays = 90;
+  const progressPercentage = (completedDays / totalDays) * 100;
 
   /**
-   * Maneja el envío del formulario de reporte semanal
+   * Maneja el envío del formulario de reporte diario
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!weekNumber || !hoursWorked || !activities || !learnings) {
+    if (!reportDate || !hoursWorked || !activities || !learnings) {
       toast({
         title: "Campos requeridos",
         description: "Por favor completa todos los campos obligatorios antes de guardar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    /**
+     * Verificar si ya existe un reporte para esta fecha
+     */
+    const existingReport = reports.find(r => r.date === reportDate);
+    if (existingReport) {
+      toast({
+        title: "Reporte duplicado",
+        description: "Ya existe un reporte para esta fecha. Por favor selecciona otra fecha.",
         variant: "destructive"
       });
       return;
@@ -132,8 +169,8 @@ const Reports = () => {
      */
     const newReport: Report = {
       id: Date.now().toString(), // ID único basado en timestamp
-      week: parseInt(weekNumber),
-      hours: parseInt(hoursWorked),
+      date: reportDate,
+      hours: parseFloat(hoursWorked),
       activities,
       learnings,
       difficulties,
@@ -144,19 +181,21 @@ const Reports = () => {
     /**
      * Agregar el nuevo reporte al estado y localStorage
      */
-    const updatedReports = [newReport, ...reports];
+    const updatedReports = [newReport, ...reports].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
     setReports(updatedReports);
     localStorage.setItem('practiceReports', JSON.stringify(updatedReports));
 
     toast({
       title: "✅ Reporte enviado exitosamente",
-      description: `Se ha enviado el reporte de la semana ${weekNumber}. Estado: Pendiente Revisión.`,
+      description: `Se ha enviado el reporte del día ${new Date(reportDate).toLocaleDateString('es-ES')}. Estado: Pendiente Revisión.`,
     });
 
     /**
      * Reset form y volver al paso 1
      */
-    setWeekNumber("");
+    setReportDate(new Date().toISOString().split('T')[0]);
     setHoursWorked("");
     setActivities("");
     setLearnings("");
@@ -198,7 +237,7 @@ const Reports = () => {
             </Button>
           </div>
           <h1 className="text-3xl font-bold mb-2">Mi Bitácora de Práctica</h1>
-          <p className="text-lg opacity-90">Registra tus actividades semanales y mantén un seguimiento de tu progreso</p>
+          <p className="text-lg opacity-90">Registra tus actividades diarias y mantén un seguimiento de tu progreso</p>
         </div>
       </header>
 
@@ -215,14 +254,11 @@ const Reports = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-foreground">
-                  {completedWeeks} de {totalWeeks} semanas completadas
+                  {completedDays} de {totalDays} días reportados
                 </span>
                 <span className="text-sm font-medium text-accent">{progressPercentage.toFixed(0)}%</span>
               </div>
               <Progress value={progressPercentage} className="w-full h-3" />
-              <p className="text-sm text-muted-foreground">
-                Próxima semana a reportar: <strong>Semana {currentWeek}</strong>
-              </p>
               <div className="flex gap-4 text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -238,7 +274,7 @@ const Reports = () => {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
-                Te quedan {totalWeeks - currentWeek} semanas para completar tu práctica profesional
+                Total de horas registradas: <strong>{reports.reduce((sum, r) => sum + r.hours, 0).toFixed(1)} horas</strong>
               </p>
             </div>
           </CardContent>
@@ -251,7 +287,7 @@ const Reports = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-primary">
                   <BookOpen className="w-5 h-5" />
-                  Nuevo Reporte Semanal
+                  Nuevo Reporte Diario
                 </CardTitle>
                 <CardDescription>
                   Paso {currentStep} de {totalSteps}: {stepNames[currentStep - 1]}
@@ -303,15 +339,13 @@ const Reports = () => {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium mb-2 text-foreground">
-                            Número de Semana *
+                            Fecha del Reporte *
                           </label>
                           <Input
-                            type="number"
-                            placeholder="Ej: 8"
-                            value={weekNumber}
-                            onChange={(e) => setWeekNumber(e.target.value)}
-                            min="1"
-                            max="12"
+                            type="date"
+                            value={reportDate}
+                            onChange={(e) => setReportDate(e.target.value)}
+                            max={new Date().toISOString().split('T')[0]}
                           />
                         </div>
                         <div>
@@ -320,10 +354,12 @@ const Reports = () => {
                           </label>
                           <Input
                             type="number"
-                            placeholder="Ej: 40"
+                            placeholder="Ej: 8"
                             value={hoursWorked}
                             onChange={(e) => setHoursWorked(e.target.value)}
                             min="0"
+                            max="24"
+                            step="0.5"
                           />
                         </div>
                       </div>
@@ -382,7 +418,7 @@ const Reports = () => {
                           Principales Aprendizajes *
                         </label>
                         <Textarea
-                          placeholder="¿Qué nuevas habilidades, conocimientos o experiencias adquiriste esta semana?"
+                          placeholder="¿Qué nuevas habilidades, conocimientos o experiencias adquiriste hoy?"
                           value={learnings}
                           onChange={(e) => setLearnings(e.target.value)}
                           className="min-h-[100px]"
@@ -432,7 +468,7 @@ const Reports = () => {
                   Reportes Anteriores
                 </CardTitle>
                 <CardDescription>
-                  Historial de tus entregas semanales
+                  Historial de tus entregas diarias
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -441,7 +477,14 @@ const Reports = () => {
                     <div key={report.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                       <div className="flex justify-between items-start mb-3">
                         <div>
-                          <h4 className="font-medium text-foreground">Semana {report.week}</h4>
+                          <h4 className="font-medium text-foreground">
+                            {new Date(report.date).toLocaleDateString('es-ES', { 
+                              weekday: 'long', 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                          </h4>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
@@ -449,7 +492,7 @@ const Reports = () => {
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
-                              <span>{new Date(report.submittedDate).toLocaleDateString('es-ES')}</span>
+                              <span>Enviado: {new Date(report.submittedDate).toLocaleDateString('es-ES')}</span>
                             </div>
                           </div>
                         </div>

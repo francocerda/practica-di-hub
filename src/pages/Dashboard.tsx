@@ -75,7 +75,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Reportes Enviados</p>
-                    <p className="font-medium text-foreground">3 de 12 semanas</p>
+                    <p className="font-medium text-foreground">3 días</p>
                   </div>
                 </div>
               </CardContent>
@@ -126,7 +126,7 @@ const Dashboard = () => {
               </div>
               <CardTitle className="text-xl text-primary">Reportar Avances</CardTitle>
               <CardDescription>
-                Registra tus actividades semanales y mantén actualizada tu bitácora de práctica
+                Registra tus actividades diarias y mantén actualizada tu bitácora de práctica
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
@@ -150,8 +150,8 @@ const Dashboard = () => {
               <div className="p-4 bg-accent/10 rounded-lg border-l-4 border-l-accent">
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1">
-                    <p className="font-medium text-accent-foreground">Recordatorio: Entrega de informe semanal</p>
-                    <p className="text-sm text-muted-foreground mt-1">Tienes hasta mañana para entregar tu informe de la semana 4</p>
+                    <p className="font-medium text-accent-foreground">Recordatorio: Entrega de informe diario</p>
+                    <p className="text-sm text-muted-foreground mt-1">No olvides registrar tus actividades del día de hoy</p>
                   </div>
                   <Button 
                     size="sm" 
