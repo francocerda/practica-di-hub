@@ -22,14 +22,13 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
   const { toast } = useToast();
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
-
-  // Pre-filled user data (would come from auth context in real app)
-  const studentData = {
-    name: "",
-    email: "",
-    phone: "",
-    career: ""
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form fields
+  const [name, setName] = useState("María González");
+  const [email, setEmail] = useState("maria.gonzalez@estudiante.di.cl");
+  const [phone, setPhone] = useState("+56 9 8765 4321");
+  const [career, setCareer] = useState("Ingeniería Civil en Informática");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -41,6 +40,15 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!name || !email || !phone || !career) {
+      toast({
+        title: "Campos incompletos",
+        description: "Por favor completa todos los campos obligatorios.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (!cvFile) {
       toast({
         title: "CV requerido",
@@ -50,15 +58,25 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
       return;
     }
 
-    toast({
-      title: "¡Postulación enviada exitosamente!",
-      description: `Tu postulación para ${offer?.position} en ${offer?.company} ha sido registrada.`,
-    });
+    setIsSubmitting(true);
+    
+    // Simular envío
+    setTimeout(() => {
+      toast({
+        title: "¡Postulación enviada exitosamente! ✅",
+        description: `Tu postulación para ${offer?.position} en ${offer?.company} ha sido registrada. Recibirás una confirmación por email.`,
+      });
 
-    // Reset form and close modal
-    setCvFile(null);
-    setCoverLetter("");
-    onClose();
+      // Reset form and close modal
+      setCvFile(null);
+      setCoverLetter("");
+      setName("María González");
+      setEmail("maria.gonzalez@estudiante.di.cl");
+      setPhone("+56 9 8765 4321");
+      setCareer("Ingeniería Civil en Informática");
+      setIsSubmitting(false);
+      onClose();
+    }, 1000);
   };
 
   if (!offer) return null;
@@ -81,18 +99,22 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
           {/* Pre-filled student data */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name">Nombre Completo</Label>
+              <Label htmlFor="name">Nombre Completo *</Label>
               <Input
                 id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Ingresa tu nombre completo"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.email@estudiante.di.cl"
                 required
               />
@@ -101,17 +123,21 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="phone">Teléfono</Label>
+              <Label htmlFor="phone">Teléfono *</Label>
               <Input
                 id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 placeholder="+56 9 1234 5678"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="career">Carrera</Label>
+              <Label htmlFor="career">Carrera *</Label>
               <Input
                 id="career"
+                value={career}
+                onChange={(e) => setCareer(e.target.value)}
                 placeholder="Tu carrera"
                 required
               />
@@ -170,6 +196,7 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
               variant="outline"
               onClick={onClose}
               className="flex-1"
+              disabled={isSubmitting}
             >
               <X className="w-4 h-4 mr-2" />
               Cancelar
@@ -177,9 +204,19 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
             <Button
               type="submit"
               className="flex-1 gradient-primary text-primary-foreground font-medium"
+              disabled={isSubmitting}
             >
-              <Send className="w-4 h-4 mr-2" />
-              Enviar Postulación
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Enviar Postulación
+                </>
+              )}
             </Button>
           </div>
         </form>

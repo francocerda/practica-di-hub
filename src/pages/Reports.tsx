@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Clock, BookOpen, TrendingUp, Save, CheckCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import Navbar from "@/components/Navbar";
 
 // Tipos para TypeScript
 interface Report {
@@ -42,47 +43,37 @@ const Reports = () => {
     if (savedReports) {
       setReports(JSON.parse(savedReports));
     } else {
-      // Datos iniciales ficticios
+      // Datos iniciales ficticios - Semanas 1, 2 y 3
       const initialReports: Report[] = [
         {
-          id: "1",
-          week: 7,
-          hours: 40,
-          activities: "Desarrollo de módulo de autenticación, revisión de código, documentación técnica",
-          learnings: "Aprendí sobre JWT tokens y mejores prácticas de seguridad",
-          difficulties: "Configuración inicial del sistema de roles fue compleja",
-          submittedDate: "2024-01-15",
+          id: "3",
+          week: 3,
+          hours: 42,
+          activities: "Diseño de base de datos para el proyecto principal, modelado de entidades y relaciones, documentación técnica del modelo ER",
+          learnings: "Aprendí sobre normalización de bases de datos, relaciones complejas entre entidades y mejores prácticas de diseño de bases de datos",
+          difficulties: "Manejo de transacciones complejas y implementación correcta de rollbacks en casos de error",
+          submittedDate: "2024-02-19",
           status: "Aprobado"
         },
         {
           id: "2", 
-          week: 6,
+          week: 2,
           hours: 38,
-          activities: "Implementación de API REST, testing unitario, reuniones de equipo",
-          learnings: "Profundicé en patrones de arquitectura backend",
-          difficulties: "Optimización de consultas a base de datos",
-          submittedDate: "2024-01-08",
+          activities: "Configuración del entorno de desarrollo, instalación de herramientas necesarias, primeros commits al repositorio del proyecto",
+          learnings: "Familiarización con el stack tecnológico de la empresa, Git workflows utilizados por el equipo y metodologías ágiles",
+          difficulties: "Configuración inicial de las credenciales de acceso y permisos en los diferentes sistemas",
+          submittedDate: "2024-02-12",
           status: "Aprobado"
         },
         {
-          id: "3",
-          week: 5,
-          hours: 42,
-          activities: "Diseño de base de datos, modelado de entidades, documentación",
-          learnings: "Normalización de bases de datos y relaciones complejas",
-          difficulties: "Manejo de transacciones y rollbacks",
-          submittedDate: "2024-01-01",
-          status: "Aprobado"
-        },
-        {
-          id: "4",
-          week: 4,
+          id: "1",
+          week: 1,
           hours: 40,
-          activities: "Setup del entorno de desarrollo, configuración de herramientas",
-          learnings: "Docker, CI/CD pipelines básicos",
-          difficulties: "Configuración de entorno de staging",
-          submittedDate: "2023-12-25",
-          status: "Necesita Revisión"
+          activities: "Inducción general a la empresa, conocimiento del equipo de trabajo, revisión de la documentación del proyecto asignado, setup inicial de ambiente local",
+          learnings: "Conocimiento de la cultura organizacional, procesos internos de desarrollo, herramientas colaborativas utilizadas (Jira, Confluence, Slack)",
+          difficulties: "Adaptación al ritmo de trabajo del equipo y comprensión del dominio del negocio",
+          submittedDate: "2024-02-05",
+          status: "Aprobado"
         }
       ];
       setReports(initialReports);
@@ -167,6 +158,7 @@ const Reports = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       {/* Header */}
       <header className="gradient-primary text-primary-foreground p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">

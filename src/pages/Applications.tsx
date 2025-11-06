@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Building2, Calendar, FileText, Eye, MapPin, Clock, Users, Mail, Phone, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 // Tipos para los detalles de las empresas
 interface CompanyDetails {
@@ -267,6 +268,7 @@ const Applications = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       {/* Header */}
       <header className="gradient-primary text-primary-foreground p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">

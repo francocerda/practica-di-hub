@@ -3,11 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Search, FileText, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const studentName = "María González";
+  const studentId = "201945678-9";
+  const career = "Ingeniería Civil en Informática";
   const currentStatus = "En Práctica";
+  const currentCompany = "MobileTech Innovations";
+  const practiceStartDate = "01/02/2024";
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,11 +29,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       {/* Header */}
       <header className="gradient-primary text-primary-foreground p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Portal de Prácticas DI</h1>
-          <p className="text-lg opacity-90">Bienvenido</p>
+          <p className="text-lg opacity-90">Bienvenido/a, {studentName}</p>
+          <p className="text-sm opacity-75 mt-1">{career} • RUT: {studentId}</p>
         </div>
       </header>
 
@@ -37,16 +44,36 @@ const Dashboard = () => {
         <div className="mb-8">
           <Card className="border-l-4 border-l-accent shadow-md">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl text-primary">Estado Actual</CardTitle>
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <CardTitle className="text-2xl text-primary">Estado Actual</CardTitle>
+                  <CardDescription className="mt-2">
+                    Mantén un seguimiento de tu progreso en el programa de prácticas
+                  </CardDescription>
+                </div>
                 <Badge className={`${getStatusColor(currentStatus)} px-4 py-2 text-sm font-medium`}>
                   {currentStatus}
                 </Badge>
               </div>
-              <CardDescription>
-                Mantén un seguimiento de tu progreso en el programa de prácticas
-              </CardDescription>
             </CardHeader>
+            {currentStatus === "En Práctica" && (
+              <CardContent className="pt-0">
+                <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Empresa</p>
+                    <p className="font-medium text-foreground">{currentCompany}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Fecha de Inicio</p>
+                    <p className="font-medium text-foreground">{practiceStartDate}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Reportes Enviados</p>
+                    <p className="font-medium text-foreground">3 de 12 semanas</p>
+                  </div>
+                </div>
+              </CardContent>
+            )}
           </Card>
         </div>
 
@@ -118,7 +145,7 @@ const Dashboard = () => {
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1">
                     <p className="font-medium text-accent-foreground">Recordatorio: Entrega de informe semanal</p>
-                    <p className="text-sm text-muted-foreground mt-1">Tienes hasta mañana para entregar tu informe de la semana 8</p>
+                    <p className="text-sm text-muted-foreground mt-1">Tienes hasta mañana para entregar tu informe de la semana 4</p>
                   </div>
                   <Button 
                     size="sm" 
