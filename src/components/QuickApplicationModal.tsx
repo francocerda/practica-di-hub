@@ -18,6 +18,9 @@ interface QuickApplicationModalProps {
   } | null;
 }
 
+/**
+ * Modal de postulación rápida que permite a los estudiantes aplicar a una oferta de práctica
+ */
 const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModalProps) => {
   const { toast } = useToast();
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -30,6 +33,9 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
   const [phone, setPhone] = useState("+56 9 8765 4321");
   const [career, setCareer] = useState("Ingeniería Civil en Informática");
 
+  /**
+   * Maneja el cambio de archivo cuando el usuario selecciona su CV
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -37,6 +43,9 @@ const QuickApplicationModal = ({ isOpen, onClose, offer }: QuickApplicationModal
     }
   };
 
+  /**
+   * Maneja el envío del formulario de postulación
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     

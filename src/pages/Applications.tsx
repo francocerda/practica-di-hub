@@ -8,7 +8,9 @@ import { ArrowLeft, Building2, Calendar, FileText, Eye, MapPin, Clock, Users, Ma
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
-// Tipos para los detalles de las empresas
+/**
+ * Tipos para los detalles de las empresas
+ */
 interface CompanyDetails {
   id: number;
   company: string;
@@ -32,6 +34,9 @@ interface CompanyDetails {
   }>;
 }
 
+/**
+ * Página de postulaciones que muestra el estado de todas las aplicaciones del estudiante
+ */
 const Applications = () => {
   const navigate = useNavigate();
   const [selectedApplication, setSelectedApplication] = useState<number | null>(null);
@@ -79,7 +84,9 @@ const Applications = () => {
     }
   ];
 
-  // Datos detallados de las empresas
+  /**
+   * Datos detallados de las empresas
+   */
   const companyDetails: CompanyDetails[] = [
     {
       id: 1,
@@ -223,6 +230,9 @@ const Applications = () => {
     }
   ];
 
+  /**
+   * Retorna la clase CSS correspondiente al color del estado de la postulación
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case "En Revisión":
@@ -238,6 +248,9 @@ const Applications = () => {
     }
   };
 
+  /**
+   * Retorna el emoji correspondiente al estado de la postulación
+   */
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "En Revisión":
@@ -253,10 +266,16 @@ const Applications = () => {
     }
   };
 
+  /**
+   * Obtiene los detalles completos de una empresa por su ID
+   */
   const getCompanyDetails = (id: number): CompanyDetails | undefined => {
     return companyDetails.find(detail => detail.id === id);
   };
 
+  /**
+   * Retorna el emoji correspondiente a un evento de la línea de tiempo
+   */
   const getTimelineIcon = (event: string) => {
     if (event.includes("Postulación")) return "📝";
     if (event.includes("Entrevista")) return "🎯";

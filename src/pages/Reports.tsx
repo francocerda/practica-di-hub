@@ -10,7 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 
-// Tipos para TypeScript
+/**
+ * Tipos para TypeScript
+ */
 interface Report {
   id: string;
   week: number;
@@ -22,6 +24,9 @@ interface Report {
   status: "Pendiente Revisión" | "Aprobado" | "Necesita Revisión";
 }
 
+/**
+ * Página de bitácora de práctica donde los estudiantes registran sus avances semanales
+ */
 const Reports = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -37,7 +42,9 @@ const Reports = () => {
   const totalSteps = 3;
   const stepNames = ["Información Básica", "Actividades", "Reflexión"];
 
-  // Cargar reportes desde localStorage al montar el componente
+  /**
+   * Cargar reportes desde localStorage al montar el componente
+   */
   useEffect(() => {
     const savedReports = localStorage.getItem('practiceReports');
     if (savedReports) {
@@ -81,6 +88,9 @@ const Reports = () => {
     }
   }, []);
 
+  /**
+   * Verifica si un paso del formulario está completo
+   */
   const isStepComplete = (step: number) => {
     switch (step) {
       case 1:
@@ -94,12 +104,17 @@ const Reports = () => {
     }
   };
 
-  // Calcular progreso dinámicamente basado en reportes enviados
+  /**
+   * Calcular progreso dinámicamente basado en reportes enviados
+   */
   const completedWeeks = reports.length;
   const totalWeeks = 12;
   const currentWeek = completedWeeks + 1;
   const progressPercentage = (completedWeeks / totalWeeks) * 100;
 
+  /**
+   * Maneja el envío del formulario de reporte semanal
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -112,7 +127,9 @@ const Reports = () => {
       return;
     }
 
-    // Crear nuevo reporte
+    /**
+     * Crear nuevo reporte
+     */
     const newReport: Report = {
       id: Date.now().toString(), // ID único basado en timestamp
       week: parseInt(weekNumber),
@@ -124,7 +141,9 @@ const Reports = () => {
       status: "Pendiente Revisión"
     };
 
-    // Agregar el nuevo reporte al estado y localStorage
+    /**
+     * Agregar el nuevo reporte al estado y localStorage
+     */
     const updatedReports = [newReport, ...reports];
     setReports(updatedReports);
     localStorage.setItem('practiceReports', JSON.stringify(updatedReports));
@@ -134,7 +153,9 @@ const Reports = () => {
       description: `Se ha enviado el reporte de la semana ${weekNumber}. Estado: Pendiente Revisión.`,
     });
 
-    // Reset form y volver al paso 1
+    /**
+     * Reset form y volver al paso 1
+     */
     setWeekNumber("");
     setHoursWorked("");
     setActivities("");
@@ -143,6 +164,9 @@ const Reports = () => {
     setCurrentStep(1);
   };
 
+  /**
+   * Retorna la clase CSS correspondiente al color del estado del reporte
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Aprobado":

@@ -11,6 +11,9 @@ import { useNavigate } from "react-router-dom";
 import QuickApplicationModal from "@/components/QuickApplicationModal";
 import Navbar from "@/components/Navbar";
 
+/**
+ * Página de ofertas de práctica que permite buscar, filtrar y postular a oportunidades
+ */
 const Offers = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,11 +24,17 @@ const Offers = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState<typeof offers[0] | null>(null);
 
+  /**
+   * Abre el modal de postulación rápida con la oferta seleccionada
+   */
   const handleQuickApplication = (offer: typeof offers[0]) => {
     setSelectedOffer(offer);
     setIsApplicationModalOpen(true);
   };
 
+  /**
+   * Abre el modal de detalles con la información completa de la oferta seleccionada
+   */
   const handleViewDetails = (offer: typeof offers[0]) => {
     setSelectedOffer(offer);
     setIsDetailsModalOpen(true);
@@ -178,6 +187,9 @@ const Offers = () => {
     }
   ];
 
+  /**
+   * Filtra las ofertas según los criterios de búsqueda y filtros seleccionados
+   */
   const filteredOffers = offers.filter(offer => {
     const matchesSearch = offer.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          offer.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -189,6 +201,9 @@ const Offers = () => {
     return matchesSearch && matchesModality && matchesSchedule && matchesArea;
   });
 
+  /**
+   * Retorna la clase CSS correspondiente al color de la modalidad de trabajo
+   */
   const getModalityColor = (modality: string) => {
     switch (modality) {
       case "Remoto":

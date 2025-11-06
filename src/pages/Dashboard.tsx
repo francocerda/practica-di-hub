@@ -5,6 +5,9 @@ import { Bell, Search, FileText, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
+/**
+ * Página principal del dashboard que muestra el estado actual del estudiante y accesos rápidos
+ */
 const Dashboard = () => {
   const navigate = useNavigate();
   const studentName = "María González";
@@ -14,6 +17,9 @@ const Dashboard = () => {
   const currentCompany = "MobileTech Innovations";
   const practiceStartDate = "01/02/2024";
 
+  /**
+   * Retorna la clase CSS correspondiente al color del estado de práctica
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Buscando Práctica":

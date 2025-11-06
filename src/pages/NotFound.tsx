@@ -4,6 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Home, Search, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
+/**
+ * Página de error 404 que se muestra cuando el usuario intenta acceder a una ruta inexistente
+ */
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();

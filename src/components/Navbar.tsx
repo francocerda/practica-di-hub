@@ -11,6 +11,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+/**
+ * Componente de barra de navegación que proporciona acceso a las diferentes secciones de la aplicación
+ */
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,8 +26,14 @@ const Navbar = () => {
     { path: "/reports", label: "Bitácora", icon: TrendingUp },
   ];
 
+  /**
+   * Verifica si una ruta está actualmente activa
+   */
   const isActive = (path: string) => location.pathname === path;
 
+  /**
+   * Maneja la navegación a una ruta específica y cierra el menú móvil
+   */
   const handleNavigation = (path: string) => {
     navigate(path);
     setIsOpen(false);

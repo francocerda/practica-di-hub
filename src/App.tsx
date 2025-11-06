@@ -11,6 +11,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+/**
+ * Componente principal de la aplicación que configura el enrutamiento y los proveedores globales
+ */
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -22,7 +25,6 @@ const App = () => (
           <Route path="/offers" element={<Offers />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/applications" element={<Applications />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
